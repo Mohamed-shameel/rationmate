@@ -1,6 +1,4 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const Shop = require('../models/Shop');
 
 const auth = async (req, res, next) => {
   try {
@@ -10,7 +8,7 @@ const auth = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'No token provided'
+        message: 'No token provided. Please log in.'
       });
     }
 
@@ -21,9 +19,17 @@ const auth = async (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
+    // Differentiate between expired and invalid tokens
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        success: false,
+        message: 'Session expired. Please log in again.',
+        expired: true
+      });
+    }
     res.status(401).json({
       success: false,
-      message: 'Invalid token'
+      message: 'Invalid token. Please log in again.'
     });
   }
 };

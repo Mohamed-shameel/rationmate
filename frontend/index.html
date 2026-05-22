@@ -1,1055 +1,470 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-    <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
-    />
-    <title>Ration Management System</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <style>
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-        }
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #53d22c;
-            color: #131712;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-        }
-        .notification.show {
-            transform: translateX(0);
-        }
-        .delete-btn {
-            background: #ef4444;
-            color: white;
-            transition: all 0.2s ease;
-        }
-        .delete-btn:hover {
-            background: #dc2626;
-            transform: scale(1.05);
-        }
-        .confirm-modal {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="RationMate — Smart Ration Distribution Management System for shop owners and citizens." />
+  <title>RationMate — Smart Ration Distribution</title>
+  <!-- Inline SVG favicon — the RationMate leaf mark -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='12' fill='%23131712'/><path d='M24 45.8C19.7 45.8 15.5 44.5 11.9 42.1 8.3 39.7 5.5 36.3 3.9 32.3 2.2 28.4 1.8 24 2.6 19.7 3.5 15.5 5.5 11.6 8.6 8.6 11.6 5.5 15.5 3.5 19.7 2.6 24 1.8 28.4 2.2 32.3 3.9 36.3 5.5 39.7 8.3 42.1 11.9 44.5 15.5 45.8 19.7 45.8 24L24 24Z' fill='%2353d22c'/></svg>" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-    <div class="relative flex size-full min-h-screen flex-col bg-[#131712] dark group/design-root overflow-x-hidden" style='font-family: Manrope, "Noto Sans", sans-serif;'>
-        
-        <!-- Page 1: Welcome/Login Selection -->
-        <div id="page1" class="page active">
-            <div class="layout-container flex h-full grow flex-col">
-                <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
-                    <div class="flex items-center gap-4 text-white">
-                        <div class="size-4">
-                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">RationMate</h2>
-                    </div>
-                </header>
-                <div class="px-40 flex flex-1 justify-center py-5">
-                    <div class="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px] flex-1">
-                        <h2 class="text-white tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">Welcome to RationMate</h2>
-                        <div class="flex justify-center">
-                            <div class="flex flex-1 gap-3 max-w-[480px] flex-col items-stretch px-4 py-3">
-                                <button id="loginUser" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 bg-[#53d22c] text-[#131712] text-base font-bold leading-normal tracking-[0.015em] w-full">
-                                    <span class="truncate">Login as User</span>
-                                </button>
-                                <button id="loginShopOwner" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 bg-[#2d372a] text-white text-base font-bold leading-normal tracking-[0.015em] w-full">
-                                    <span class="truncate">Login as Shop Owner</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <!-- Shown only if JavaScript is disabled -->
+  <noscript>
+    <div style="
+      position:fixed;inset:0;background:#131712;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-family:system-ui,sans-serif;color:#fff;text-align:center;padding:2rem;
+    ">
+      <svg style="width:3rem;height:3rem;color:#53d22c;margin-bottom:1rem" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="#53d22c"/>
+      </svg>
+      <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:.5rem">RationMate</h1>
+      <p style="color:#a5b6a0;max-width:360px">JavaScript is required to run this application. Please enable JavaScript in your browser settings and reload the page.</p>
+    </div>
+  </noscript>
+  <div
+    class="relative flex size-full min-h-screen flex-col bg-[#131712] group/design-root overflow-x-hidden"
+    style='font-family: Manrope, "Noto Sans", sans-serif;'
+  >
+
+    <!-- ══════════════════════════════════════════════════════
+         PAGE 1 — Welcome / Role Selection
+    ══════════════════════════════════════════════════════ -->
+    <div id="page1" class="page active">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
+          <div class="flex items-center gap-3 text-white">
+            <div class="size-5 text-[#53d22c]">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/>
+              </svg>
             </div>
-        </div>
+            <h1 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">RationMate</h1>
+          </div>
+        </header>
 
-        <!-- Page 2: Shop Selection -->
-        <div id="page2" class="page">
-            <div class="layout-container flex h-full grow flex-col">
-                <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
-                    <div class="flex items-center gap-4 text-white">
-                        <div class="size-4">
-                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Ration System</h2>
-                    </div>
-                    <div class="flex flex-1 justify-end gap-8">
-                        <div class="flex items-center gap-9">
-                            <a class="text-white text-sm font-medium leading-normal cursor-pointer" onclick="showPage('page1')">Home</a>
-                            <a class="text-white text-sm font-medium leading-normal" href="#">About</a>
-                            
-                        </div>
-                        <button onclick="showPage('page1')" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                            <span class="truncate">Back to Home</span>
-                        </button>
-                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBpqr0SSnW1O15H9qWp2DZp5rha02aFAoU4pSxipe-lJQmtdgH8Mo_jEbRfw2764l3Tj-kClC5ET3mmk_kmK8FTK34m2yDo4SN72fZetJgKBaU7qIYOW6E7SPBtpLwCBOfQVeXfM5goUpPHqi1IgmJMvTQSF4J-Qw8bBkWHeXuupXYyD-8qB7gMFDjRZO56LhZ1uIL3UZyEOf5-o4uNZeIOUMFxN6dORSKTY8OzPNcwfgpvg_HtoHeiVeFCiUN__oDbomQLZXLRQAo");'></div>
-                    </div>
-                </header>
-                <div class="px-40 flex flex-1 justify-center py-5">
-                    <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-                        <div class="flex flex-wrap justify-between gap-3 p-4">
-                            <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Select Your Shop</p>
-                        </div>
-                        
-                        <!-- Shop Password Modal -->
-                        <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
-                            <div class="bg-[#1f251d] p-8 rounded-xl border border-[#42513e] max-w-md w-full mx-4">
-                                <h3 class="text-white text-xl font-bold mb-4">Enter Shop Password</h3>
-                                <input id="shopPassword" type="password" placeholder="Enter password" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#42513e] bg-[#131712] focus:border-[#42513e] h-14 placeholder:text-[#a5b6a0] p-[15px] text-base font-normal leading-normal mb-4">
-                                <div class="flex gap-3">
-                                    <button id="verifyPassword" class="flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#53d22c] text-[#131712] text-sm font-bold leading-normal tracking-[0.015em]">
-                                        Login
-                                    </button>
-                                    <button id="cancelPassword" class="flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                                        Cancel
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-4 cursor-pointer shop-item" data-shop="1">
-                            <div class="flex items-stretch justify-between gap-4 rounded-xl hover:bg-[#1f251d] p-4 transition-colors">
-                                <div class="flex flex-col gap-1 flex-[2_2_0px]">
-                                    <p class="text-white text-base font-bold leading-tight">Shop 1:Tambaram Ration</p>
-                                    <p class="text-[#a5b6a0] text-sm font-normal leading-normal"> Main Street, Tambaram</p>
-                                </div>
-                                <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1" style='background-image: url("https://media.assettype.com/TNIE%2Fimport%2F2019%2F2%2F17%2Foriginal%2FRation_Shops.jpg?w=480&auto=format%2Ccompress");'></div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 cursor-pointer shop-item" data-shop="2">
-                            <div class="flex items-stretch justify-between gap-4 rounded-xl hover:bg-[#1f251d] p-4 transition-colors">
-                                <div class="flex flex-col gap-1 flex-[2_2_0px]">
-                                    <p class="text-white text-base font-bold leading-tight">Shop 2:Perambur Ration </p>
-                                    <p class="text-[#a5b6a0] text-sm font-normal leading-normal"> Central Avenue, Perambur</p>
-                                </div>
-                                <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1" style='background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTs1Vg8KyqPFSomEU3IJJm8CvsYSlUKwm8GfA&s");'></div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 cursor-pointer shop-item" data-shop="3">
-                            <div class="flex items-stretch justify-between gap-4 rounded-xl hover:bg-[#1f251d] p-4 transition-colors">
-                                <div class="flex flex-col gap-1 flex-[2_2_0px]">
-                                    <p class="text-white text-base font-bold leading-tight">Shop 3:Kundrathur  Ration </p>
-                                    <p class="text-[#a5b6a0] text-sm font-normal leading-normal">Gandhi Nagar,Kundrathur</p>
-                                </div>
-                                <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1" style='background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0AphCmgma7q2CcXYcx0tTHU9SgnqEsE02DQ&s");'></div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="flex flex-1 items-center justify-center px-6 py-16">
+          <div class="flex flex-col items-center gap-8 w-full max-w-sm">
+            <div class="text-center">
+              <div class="w-16 h-16 rounded-2xl bg-[#1f251d] border border-[#2d372a] flex items-center justify-center mx-auto mb-4">
+                <div class="size-8 text-[#53d22c]">
+                  <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/>
+                  </svg>
                 </div>
+              </div>
+              <h2 class="text-white text-2xl font-bold mb-2">Welcome to RationMate</h2>
+              <p class="text-[#a5b6a0] text-sm">Your smart ration distribution system</p>
             </div>
-        </div>
 
-        <!-- Page 3: Shop Inventory Management -->
-        <div id="page3" class="page">
-            <div class="layout-container flex h-full grow flex-col">
-                <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
-                    <div class="flex items-center gap-4 text-white">
-                        <div class="size-4">
-                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z" fill="currentColor"></path>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M39.998 35.764C39.9944 35.7463 39.9875 35.7155 39.9748 35.6706C39.9436 35.5601 39.8949 35.4259 39.8346 35.2825C39.8168 35.2403 39.7989 35.1993 39.7813 35.1602C38.5103 34.2887 35.9788 33.0607 33.7095 32.5189C30.9875 31.8691 27.6413 31.4783 24 31.4783C20.3587 31.4783 17.0125 31.8691 14.2905 32.5189C12.0012 33.0654 9.44505 34.3104 8.18538 35.1832C8.17384 35.2075 8.16216 35.233 8.15052 35.2592C8.09919 35.3751 8.05721 35.4886 8.02977 35.589C8.00356 35.6848 8.00039 35.7333 8.00004 35.7388C8.00004 35.739 8 35.7393 8.00004 35.7388C8.00004 35.7641 8.0104 36.0767 8.68485 36.6314C9.34546 37.1746 10.4222 37.7531 11.9291 38.2772C14.9242 39.319 19.1919 40 24 40C28.8081 40 33.0758 39.319 36.0709 38.2772C37.5778 37.7531 38.6545 37.1746 39.3151 36.6314C39.9006 36.1499 39.9857 35.8511 39.998 35.764ZM4.95178 32.7688L21.4543 6.30267C22.6288 4.4191 25.3712 4.41909 26.5457 6.30267L43.0534 32.777C43.0709 32.8052 43.0878 32.8338 43.104 32.8629L41.3563 33.8352C43.104 32.8629 43.1038 32.8626 43.104 32.8629L43.1051 32.865L43.1065 32.8675L43.1101 32.8739L43.1199 32.8918C43.1276 32.906 43.1377 32.9246 43.1497 32.9473C43.1738 32.9925 43.2062 33.0545 43.244 33.1299C43.319 33.2792 43.4196 33.489 43.5217 33.7317C43.6901 34.1321 44 34.9311 44 35.7391C44 37.4427 43.003 38.7775 41.8558 39.7209C40.6947 40.6757 39.1354 41.4464 37.385 42.0552C33.8654 43.2794 29.133 44 24 44C18.867 44 14.1346 43.2794 10.615 42.0552C8.86463 41.4464 7.30529 40.6757 6.14419 39.7209C4.99695 38.7775 3.99999 37.4427 3.99999 35.7391C3.99999 34.8725 4.29264 34.0922 4.49321 33.6393C4.60375 33.3898 4.71348 33.1804 4.79687 33.0311C4.83898 32.9556 4.87547 32.8935 4.9035 32.8471C4.91754 32.8238 4.92954 32.8043 4.93916 32.7889L4.94662 32.777L4.95178 32.7688ZM35.9868 29.004L24 9.77997L12.0131 29.004C12.4661 28.8609 12.9179 28.7342 13.3617 28.6282C16.4281 27.8961 20.0901 27.4783 24 27.4783C27.9099 27.4783 31.5719 27.8961 34.6383 28.6282C35.082 28.7342 35.5339 28.8609 35.9868 29.004Z" fill="currentColor"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Ration Management System</h2>
-                    </div>
-                    <div class="flex gap-2">
-                    
-                        
-                    </div>
-                    <div class="flex flex-1 justify-end gap-8">
-                        <div class="flex items-center gap-9">
-                            <a class="text-white text-sm font-medium leading-normal cursor-pointer" onclick="showPage('page2')">Dashboard</a>
-                            <a class="text-white text-sm font-medium leading-normal" href="#">Products</a>
-                            
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="showPage('page2')" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                                <span class="truncate">Back</span>
-                            </button>
-                            <button onclick="showPage('page1')" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#53d22c] text-[#131712] text-sm font-bold leading-normal tracking-[0.015em]">
-                                <span class="truncate">Home</span>
-                            </button>
-                        </div>
-                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA60rAEmmJIA_-dNDoiKhHA_ltEm8v0yt1ye60LZixKzI4_uZEFNBq3aE8hmrY3iKmkUL7b2tIgqoU_Kza6mqbkyM8TOWImeXQBHRhlkoMEcv74t_X6TyB7OQzUn_HTE8O-22WaYltIcELCOXqi2wNcK_dF1BEzE2b7xEr6YdyEnI03NJh1_-QANkmsmUVHinXw7y8kqiF8jkssE7gGzV3Fne4gM1yD1w6GlZCetGf0svOvkqMIbSOL5iPyMRGsxasLRlraONFqkxQ");'></div>
-                    </div>
-                </header>
-                <div class="px-40 flex flex-1 justify-center py-5">
-                    <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-                        <div class="flex flex-wrap justify-between gap-3 p-4">
-                            <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Shop Inventory Management</p>
-                        </div>
-                        <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Add New Product</h3>
-                        <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                            <label class="flex flex-col min-w-40 flex-1">
-                                <p class="text-white text-base font-medium leading-normal pb-2">Product Name</p>
-                                <input id="newProductName" placeholder="Enter product name" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#42513e] bg-[#1f251d] focus:border-[#42513e] h-14 placeholder:text-[#a5b6a0] p-[15px] text-base font-normal leading-normal" value="" />
-                            </label>
-                        </div>
-                        <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                            <label class="flex flex-col min-w-40 flex-1">
-                                <p class="text-white text-base font-medium leading-normal pb-2">Quantity (kg)</p>
-                                <input id="newProductQuantity" placeholder="Enter quantity in kg" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#42513e] bg-[#1f251d] focus:border-[#42513e] h-14 placeholder:text-[#a5b6a0] p-[15px] text-base font-normal leading-normal" value="" />
-                            </label>
-                        </div>
-                        <div class="flex px-4 py-3 justify-start">
-                            <button id="addProduct" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#53d22c] text-[#131712] text-sm font-bold leading-normal tracking-[0.015em]">
-                                <span class="truncate">Add Product</span>
-                            </button>
-                        </div>
-                        <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Update Existing Products</h3>
-                        <div class="px-4 py-3 @container">
-                            <div class="flex overflow-hidden rounded-xl border border-[#42513e] bg-[#131712]">
-                                <table class="flex-1">
-                                    <thead>
-                                        <tr class="bg-[#1f251d]">
-                                            <th class="px-4 py-3 text-left text-white w-[150px] text-sm font-medium leading-normal">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="productTableBody">
-                                        <tr class="border-t border-t-[#42513e]" data-product="Wheat">
-                                            <td class="h-[72px] px-4 py-2 w-[300px] text-white text-sm font-normal leading-normal">Wheat</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px] text-[#a5b6a0] text-sm font-normal leading-normal stock-value">50</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px]">
-                                                <input type="number" class="update-input w-20 px-2 py-1 rounded bg-[#1f251d] text-white border border-[#42513e] text-sm" placeholder="Qty" min="0">
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 w-[150px]">
-                                                <div class="flex gap-2">
-                                                    <button class="update-btn px-3 py-1 bg-[#53d22c] text-[#131712] rounded text-sm font-bold hover:bg-[#45b82a] transition-colors">Update</button>
-                                                    <button class="delete-btn px-3 py-1 rounded text-sm font-bold">Delete</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]" data-product="Rice">
-                                            <td class="h-[72px] px-4 py-2 w-[300px] text-white text-sm font-normal leading-normal">Rice</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px] text-[#a5b6a0] text-sm font-normal leading-normal stock-value">100</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px]">
-                                                <input type="number" class="update-input w-20 px-2 py-1 rounded bg-[#1f251d] text-white border border-[#42513e] text-sm" placeholder="Qty" min="0">
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 w-[150px]">
-                                                <div class="flex gap-2">
-                                                    <button class="update-btn px-3 py-1 bg-[#53d22c] text-[#131712] rounded text-sm font-bold hover:bg-[#45b82a] transition-colors">Update</button>
-                                                    <button class="delete-btn px-3 py-1 rounded text-sm font-bold">Delete</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]" data-product="Sugar">
-                                            <td class="h-[72px] px-4 py-2 w-[300px] text-white text-sm font-normal leading-normal">Sugar</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px] text-[#a5b6a0] text-sm font-normal leading-normal stock-value">75</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px]">
-                                                <input type="number" class="update-input w-20 px-2 py-1 rounded bg-[#1f251d] text-white border border-[#42513e] text-sm" placeholder="Qty" min="0">
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 w-[150px]">
-                                                <div class="flex gap-2">
-                                                    <button class="update-btn px-3 py-1 bg-[#53d22c] text-[#131712] rounded text-sm font-bold hover:bg-[#45b82a] transition-colors">Update</button>
-                                                    <button class="delete-btn px-3 py-1 rounded text-sm font-bold">Delete</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]" data-product="Lentils">
-                                            <td class="h-[72px] px-4 py-2 w-[300px] text-white text-sm font-normal leading-normal">Lentils</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px] text-[#a5b6a0] text-sm font-normal leading-normal stock-value">60</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px]">
-                                                <input type="number" class="update-input w-20 px-2 py-1 rounded bg-[#1f251d] text-white border border-[#42513e] text-sm" placeholder="Qty" min="0">
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 w-[150px]">
-                                                <div class="flex gap-2">
-                                                    <button class="update-btn px-3 py-1 bg-[#53d22c] text-[#131712] rounded text-sm font-bold hover:bg-[#45b82a] transition-colors">Update</button>
-                                                    <button class="delete-btn px-3 py-1 rounded text-sm font-bold">Delete</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]" data-product="Cooking Oil">
-                                            <td class="h-[72px] px-4 py-2 w-[300px] text-white text-sm font-normal leading-normal">Cooking Oil</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px] text-[#a5b6a0] text-sm font-normal leading-normal stock-value">40</td>
-                                            <td class="h-[72px] px-4 py-2 w-[200px]">
-                                                <input type="number" class="update-input w-20 px-2 py-1 rounded bg-[#1f251d] text-white border border-[#42513e] text-sm" placeholder="Qty" min="0">
-                                            </td>
-                                            <td class="h-[72px] px-4 py-2 w-[150px]">
-                                                <div class="flex gap-2">
-                                                    <button class="update-btn px-3 py-1 bg-[#53d22c] text-[#131712] rounded text-sm font-bold hover:bg-[#45b82a] transition-colors">Update</button>
-                                                    <button class="delete-btn px-3 py-1 rounded text-sm font-bold">Delete</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex flex-col gap-3 w-full">
+              <button id="loginUser"
+                class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full h-12 px-5 bg-[#53d22c] text-[#131712] text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#45b82a] transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span>Login as Citizen</span>
+              </button>
+              <button id="loginShopOwner"
+                class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full h-12 px-5 bg-[#2d372a] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#3a4637] transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                </svg>
+                <span>Login as Shop Owner</span>
+              </button>
             </div>
+          </div>
         </div>
-
-        <!-- Delete Confirmation Modal -->
-        <div id="deleteConfirmModal" class="fixed inset-0 confirm-modal flex items-center justify-center z-50" style="display: none;">
-            <div class="bg-[#1f251d] p-8 rounded-xl border border-[#42513e] max-w-md w-full mx-4">
-                <h3 class="text-white text-xl font-bold mb-4">Confirm Deletion</h3>
-                <p class="text-[#a5b6a0] mb-6">Are you sure you want to delete <strong id="deleteProductName" class="text-white"></strong>? This action cannot be undone.</p>
-                <div class="flex gap-3">
-                    <button id="confirmDeleteBtn" class="flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#ef4444] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#dc2626] transition-colors">
-                        Delete
-                    </button>
-                    <button id="cancelDeleteBtn" class="flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Page 4: User Login -->
-        <div id="page4" class="page">
-            <div class="layout-container flex h-full grow flex-col">
-                <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
-                    <div class="flex items-center gap-4 text-white">
-                        <div class="size-4">
-                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z" fill="currentColor"></path>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M39.998 35.764C39.9944 35.7463 39.9875 35.7155 39.9748 35.6706C39.9436 35.5601 39.8949 35.4259 39.8346 35.2825C39.8168 35.2403 39.7989 35.1993 39.7813 35.1602C38.5103 34.2887 35.9788 33.0607 33.7095 32.5189C30.9875 31.8691 27.6413 31.4783 24 31.4783C20.3587 31.4783 17.0125 31.8691 14.2905 32.5189C12.0012 33.0654 9.44505 34.3104 8.18538 35.1832C8.17384 35.2075 8.16216 35.233 8.15052 35.2592C8.09919 35.3751 8.05721 35.4886 8.02977 35.589C8.00356 35.6848 8.00039 35.7333 8.00004 35.7388C8.00004 35.739 8 35.7393 8.00004 35.7388C8.00004 35.7641 8.0104 36.0767 8.68485 36.6314C9.34546 37.1746 10.4222 37.7531 11.9291 38.2772C14.9242 39.319 19.1919 40 24 40C28.8081 40 33.0758 39.319 36.0709 38.2772C37.5778 37.7531 38.6545 37.1746 39.3151 36.6314C39.9006 36.1499 39.9857 35.8511 39.998 35.764ZM4.95178 32.7688L21.4543 6.30267C22.6288 4.4191 25.3712 4.41909 26.5457 6.30267L43.0534 32.777C43.0709 32.8052 43.0878 32.8338 43.104 32.8629L41.3563 33.8352C43.104 32.8629 43.1038 32.8626 43.104 32.8629L43.1051 32.865L43.1065 32.8675L43.1101 32.8739L43.1199 32.8918C43.1276 32.906 43.1377 32.9246 43.1497 32.9473C43.1738 32.9925 43.2062 33.0545 43.244 33.1299C43.319 33.2792 43.4196 33.489 43.5217 33.7317C43.6901 34.1321 44 34.9311 44 35.7391C44 37.4427 43.003 38.7775 41.8558 39.7209C40.6947 40.6757 39.1354 41.4464 37.385 42.0552C33.8654 43.2794 29.133 44 24 44C18.867 44 14.1346 43.2794 10.615 42.0552C8.86463 41.4464 7.30529 40.6757 6.14419 39.7209C4.99695 38.7775 3.99999 37.4427 3.99999 35.7391C3.99999 34.8725 4.29264 34.0922 4.49321 33.6393C4.60375 33.3898 4.71348 33.1804 4.79687 33.0311C4.83898 32.9556 4.87547 32.8935 4.9035 32.8471C4.91754 32.8238 4.92954 32.8043 4.93916 32.7889L4.94662 32.777L4.95178 32.7688ZM35.9868 29.004L24 9.77997L12.0131 29.004C12.4661 28.8609 12.9179 28.7342 13.3617 28.6282C16.4281 27.8961 20.0901 27.4783 24 27.4783C27.9099 27.4783 31.5719 27.8961 34.6383 28.6282C35.082 28.7342 35.5339 28.8609 35.9868 29.004Z" fill="currentColor"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Ration Management System</h2>
-                    </div>
-                </header>
-                <div class="px-40 flex flex-1 justify-center py-5">
-                    <div class="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px] flex-1">
-                        <h2 class="text-white tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">Login as User</h2>
-                        <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                            <label class="flex flex-col min-w-40 flex-1">
-                                <input id="phoneNumber" placeholder="Enter your phone number" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#42513e] bg-[#1f251d] focus:border-[#42513e] h-14 placeholder:text-[#a5b6a0] p-[15px] text-base font-normal leading-normal" value="" />
-                            </label>
-                        </div>
-                        <div class="flex px-4 py-3 justify-center">
-                            <button id="sendOtp" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#53d22c] text-[#131712] text-sm font-bold leading-normal tracking-[0.015em]">
-                                <span class="truncate">Send OTP</span>
-                            </button>
-                        </div>
-                        <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                            <label class="flex flex-col min-w-40 flex-1">
-                                <input id="otpInput" placeholder="Enter OTP" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border border-[#42513e] bg-[#1f251d] focus:border-[#42513e] h-14 placeholder:text-[#a5b6a0] p-[15px] text-base font-normal leading-normal" value="" disabled />
-                            </label>
-                        </div>
-                        <div class="flex px-4 py-3 justify-center">
-                            <button id="verifyOtp" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold leading-normal tracking-[0.015em] opacity-50 cursor-not-allowed" disabled>
-                                <span class="truncate">Verify OTP</span>
-                            </button>
-                        </div>
-                        <div class="flex px-4 py-3 justify-center">
-                            <button id="backToHome" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                                <span class="truncate">Back to Home</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Page 5: User Inventory View -->
-        <div id="page5" class="page">
-            <div class="layout-container flex h-full grow flex-col">
-                <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
-                    <div class="flex items-center gap-4 text-white">
-                        <div class="size-4">
-                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Ration System</h2>
-                    </div>
-                    <div class="flex flex-1 justify-end gap-8">
-                        <div class="flex items-center gap-9">
-                            <a class="text-white text-sm font-medium leading-normal cursor-pointer" onclick="showPage('page1')">Home</a>
-                            <a class="text-white text-sm font-medium leading-normal" href="#">Inventory</a>
-                            
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="showPage('page4')" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                                <span class="truncate">Back</span>
-                            </button>
-                            <button onclick="showPage('page1')" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#53d22c] text-[#131712] text-sm font-bold leading-normal tracking-[0.015em]">
-                                <span class="truncate">Home</span>
-                            </button>
-                        </div>
-                        <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 bg-[#2d372a] text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
-                            <div class="text-white" data-icon="Bell" data-size="20px" data-weight="regular">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
-                                    <path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"></path>
-                                </svg>
-                            </div>
-                        </button>
-                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuACyH87JhoERRshBRArMP6zoyWfZh-e8chFRUQ-sFLcINeoeBXlgQj8Vye0jEOHip-CkDlnKFm1g8gXKPxDoIFdoQcOyr_9YCeZ7oeyU34RSzBZ-BPjfjvW505zZJYVhl9lYlLmgM3-SHwUkrRiRkwOozZgA3bZPkkkqb_eKi3FiFiBwxKWZAYM5Y7k8Yi1Q01DZO04qMGF-UOiVctnCp3R6g412MjmAXLrCY4ODu1T-jSNdWyEsMGG13VGk9P_ZRmmey9yqBMVUWw");'></div>
-                    </div>
-                </header>
-                <div class="px-40 flex flex-1 justify-center py-5">
-                    <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-                        <div class="flex flex-wrap justify-between gap-3 p-4">
-                            <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Inventory</p>
-                        </div>
-                        <div class="px-4 py-3 @container">
-                            <div class="flex overflow-hidden rounded-xl border border-[#42513e] bg-[#131712]">
-                                <table class="flex-1">
-                                    <thead>
-                                        <tr class="bg-[#1f251d]">
-                                            <th class="px-4 py-3 text-left text-white w-[400px] text-sm font-medium leading-normal">Product Name</th>
-                                            <th class="px-4 py-3 text-left text-white w-[400px] text-sm font-medium leading-normal">Availability</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="userInventoryTable">
-                                        <tr class="border-t border-t-[#42513e]">
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-white text-sm font-normal leading-normal">Wheat</td>
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-[#a5b6a0] text-sm font-normal leading-normal availability-value">100 kg</td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]">
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-white text-sm font-normal leading-normal">Rice</td>
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-[#a5b6a0] text-sm font-normal leading-normal availability-value">150 kg</td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]">
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-white text-sm font-normal leading-normal">Sugar</td>
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-[#a5b6a0] text-sm font-normal leading-normal availability-value">75 kg</td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]">
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-white text-sm font-normal leading-normal">Lentils</td>
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-[#a5b6a0] text-sm font-normal leading-normal availability-value">50 kg</td>
-                                        </tr>
-                                        <tr class="border-t border-t-[#42513e]">
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-white text-sm font-normal leading-normal">Cooking Oil</td>
-                                            <td class="h-[72px] px-4 py-2 w-[400px] text-[#a5b6a0] text-sm font-normal leading-normal availability-value">20 liters</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notification Container -->
-        <div id="notification" class="notification"></div>
+      </div>
     </div>
 
-    <script>
-        // Global variables
-        let currentPage = 'page1';
-        let otpSent = false;
-        let generatedOtp = '';
-        let productToDelete = null;
-        
-        // Inventory data synchronization
-        const inventoryData = {
-            'Wheat': 50,
-            'Rice': 100,
-            'Sugar': 75,
-            'Lentils': 60,
-            'Cooking Oil': 40
-        };
+    <!-- ══════════════════════════════════════════════════════
+         PAGE 2 — Shop Selection (Shop Owner picks their shop)
+    ══════════════════════════════════════════════════════ -->
+    <div id="page2" class="page">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
+          <div class="flex items-center gap-3 text-white">
+            <div class="size-5 text-[#53d22c]">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="text-white text-lg font-bold">RationMate</span>
+          </div>
+          <button onclick="showPage('page1')"
+            class="flex cursor-pointer items-center gap-2 rounded-full h-9 px-4 bg-[#2d372a] text-white text-sm font-bold hover:bg-[#3a4637] transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back
+          </button>
+        </header>
 
-        // Show notification function
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            
-            // Remove existing type classes
-            notification.classList.remove('bg-red-500', 'bg-green-500', 'bg-blue-500');
-            
-            // Add appropriate background color based on type
-            switch(type) {
-                case 'error':
-                    notification.style.background = '#ef4444';
-                    notification.style.color = 'white';
-                    break;
-                case 'warning':
-                    notification.style.background = '#f59e0b';
-                    notification.style.color = 'white';
-                    break;
-                case 'info':
-                    notification.style.background = '#3b82f6';
-                    notification.style.color = 'white';
-                    break;
-                default: // success
-                    notification.style.background = '#53d22c';
-                    notification.style.color = '#131712';
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
+        <div class="px-6 md:px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="flex flex-wrap justify-between gap-3 p-4">
+              <div>
+                <p class="text-white tracking-tight text-3xl font-bold leading-tight">Select Your Shop</p>
+                <p class="text-[#a5b6a0] text-sm mt-1">Click on your shop to log in</p>
+              </div>
+            </div>
 
-        // Show page function
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
-            document.getElementById(pageId).classList.add('fade-in');
-            
-            currentPage = pageId;
-            
-            // Remove fade-in class after animation
-            setTimeout(() => {
-                document.getElementById(pageId).classList.remove('fade-in');
-            }, 300);
-        }
+            <!-- Shop password modal -->
+            <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 confirm-modal" style="display: none;">
+              <div class="bg-[#1f251d] p-8 rounded-2xl border border-[#42513e] max-w-md w-full mx-4 modal-card">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-9 h-9 rounded-full bg-[#2d372a] flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#53d22c]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <h3 class="text-white text-xl font-bold">Shop Owner Login</h3>
+                </div>
+                <p class="text-[#a5b6a0] text-sm mb-5" id="selectedShopName">Enter your password to access the dashboard</p>
+                <input id="shopPassword" type="password" placeholder="Enter shop password"
+                  class="form-input flex w-full rounded-xl text-white focus:outline-none border border-[#42513e] bg-[#131712] focus:border-[#53d22c] h-12 placeholder:text-[#a5b6a0] px-4 text-sm mb-4" />
+                <div class="flex gap-3">
+                  <button id="verifyPassword"
+                    class="flex-1 cursor-pointer flex items-center justify-center rounded-full h-10 px-4 bg-[#53d22c] text-[#131712] text-sm font-bold hover:bg-[#45b82a] transition-colors">
+                    <span class="truncate">Login</span>
+                  </button>
+                  <button id="cancelPassword"
+                    class="flex-1 cursor-pointer items-center justify-center rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold hover:bg-[#3a4637] transition-colors">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
 
-        // Delete product function
-        function deleteProduct(productName) {
-            // Remove from inventory data
-            delete inventoryData[productName];
-            
-            // Remove from shop management table
-            const row = document.querySelector(`tr[data-product="${productName}"]`);
-            if (row) {
-                row.remove();
-            }
-            
-            // Update user inventory view
-            updateUserInventory();
-            
-            showNotification(`${productName} deleted successfully!`, 'info');
-        }
+            <!-- Dynamic shop grid populated by app.js -->
+            <div id="shopList" class="p-4 grid gap-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        // Show delete confirmation modal
-        function showDeleteConfirmation(productName) {
-            productToDelete = productName;
-            document.getElementById('deleteProductName').textContent = productName;
-            document.getElementById('deleteConfirmModal').style.display = 'flex';
-        }
+    <!-- ══════════════════════════════════════════════════════
+         PAGE 3 — Shop Inventory Management Dashboard
+    ══════════════════════════════════════════════════════ -->
+    <div id="page3" class="page">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
+          <div class="flex items-center gap-3 text-white">
+            <div class="size-5 text-[#53d22c]">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="text-white text-lg font-bold">RationMate</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[#a5b6a0] text-sm hidden md:block" id="currentShopName"></span>
+            <button id="logoutShopBtn"
+              class="flex cursor-pointer items-center gap-2 rounded-full h-9 px-4 bg-[#ef4444] text-white text-sm font-bold hover:bg-[#dc2626] transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              Logout
+            </button>
+          </div>
+        </header>
 
-        // Hide delete confirmation modal
-        function hideDeleteConfirmation() {
-            productToDelete = null;
-            document.getElementById('deleteConfirmModal').style.display = 'none';
-        }
+        <div class="px-6 md:px-16 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
 
-        // Initialize event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Page 1 - Login buttons
-            document.getElementById('loginUser').addEventListener('click', function() {
-                showPage('page4');
-            });
-            
-            document.getElementById('loginShopOwner').addEventListener('click', function() {
-                showPage('page2');
-            });
+            <div class="flex flex-wrap justify-between gap-3 p-4 pb-2">
+              <div>
+                <p class="text-white tracking-tight text-3xl font-bold leading-tight">Inventory Management</p>
+                <p class="text-[#a5b6a0] text-sm mt-1">Manage stock for your ration shop</p>
+              </div>
+            </div>
 
-            // Page 2 - Shop selection
-            document.querySelectorAll('.shop-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.getElementById('passwordModal').style.display = 'flex';
-                });
-            });
+            <!-- Add new product card -->
+            <div class="mx-4 my-3 rounded-2xl border border-[#2d372a] bg-[#1a211a] p-5">
+              <h3 class="text-white text-base font-bold mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-[#53d22c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Add New Product
+              </h3>
+              <div class="flex flex-wrap gap-3 items-end">
+                <div class="flex flex-col gap-1 flex-1 min-w-[180px]">
+                  <label class="text-[#a5b6a0] text-xs font-medium">Product Name</label>
+                  <input id="newProductName" placeholder="e.g. Wheat, Rice, Sugar…"
+                    class="form-input w-full rounded-xl text-white focus:outline-none border border-[#42513e] bg-[#131712] focus:border-[#53d22c] h-11 placeholder:text-[#42513e] px-4 text-sm" />
+                </div>
+                <div class="flex flex-col gap-1 flex-1 min-w-[140px]">
+                  <label class="text-[#a5b6a0] text-xs font-medium">Quantity (kg / liters)</label>
+                  <input id="newProductQuantity" type="number" placeholder="e.g. 100" min="0"
+                    class="form-input w-full rounded-xl text-white focus:outline-none border border-[#42513e] bg-[#131712] focus:border-[#53d22c] h-11 placeholder:text-[#42513e] px-4 text-sm" />
+                </div>
+                <button id="addProduct"
+                  class="flex cursor-pointer items-center justify-center gap-2 rounded-full h-11 px-6 bg-[#53d22c] text-[#131712] text-sm font-bold hover:bg-[#45b82a] transition-colors whitespace-nowrap">
+                  <span class="truncate">Add Product</span>
+                </button>
+              </div>
+            </div>
 
-            document.getElementById('cancelPassword').addEventListener('click', function() {
-                document.getElementById('passwordModal').style.display = 'none';
-                document.getElementById('shopPassword').value = '';
-            });
+            <!-- Inventory table -->
+            <h3 class="text-white text-base font-bold px-4 pb-2 pt-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-[#a5b6a0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+              Current Inventory
+            </h3>
+            <div class="px-4 py-3">
+              <div class="flex overflow-hidden rounded-xl border border-[#42513e] bg-[#131712]">
+                <table class="flex-1 w-full">
+                  <thead>
+                    <tr class="bg-[#1f251d]">
+                      <th class="px-4 py-3 text-left text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider w-[35%]">Product</th>
+                      <th class="px-4 py-3 text-left text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider w-[20%]">Stock</th>
+                      <th class="px-4 py-3 text-left text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider w-[25%]">Update</th>
+                      <th class="px-4 py-3 text-left text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider w-[20%]">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="productTableBody">
+                    <tr>
+                      <td colspan="4" class="text-center text-[#a5b6a0] py-10">Loading inventory…</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-            // Replace the shop password verification with:
-document.getElementById('verifyPassword').addEventListener('click', async function() {
-    const password = document.getElementById('shopPassword').value;
-    const shopElement = document.querySelector('.shop-item'); // You'll need to track which shop was clicked
-    
-    try {
-        const response = await fetch('http://localhost:5000/api/shops/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                shopId: 'SHOP001',
-                password 
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            localStorage.setItem('shopToken', data.token);
-            localStorage.setItem('shopData', JSON.stringify(data.shop));
-            
-            document.getElementById('passwordModal').style.display = 'none';
-            document.getElementById('shopPassword').value = '';
-            showNotification('Login successful!');
-            showPage('page3');
-        } else {
-            showNotification(data.message, 'error');
-        }
-    } catch (error) {
-        showNotification('Login failed', 'error');
-        console.error('Error:', error);
-    }
-});
+          </div>
+        </div>
+      </div>
+    </div>
 
-            // Delete confirmation modal event listeners
-            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-                if (productToDelete) {
-                    deleteProduct(productToDelete);
-                    hideDeleteConfirmation();
-                }
-            });
+    <!-- ══════════════════════════════════════════════════════
+         Delete Confirmation Modal (shared)
+    ══════════════════════════════════════════════════════ -->
+    <div id="deleteConfirmModal" class="fixed inset-0 confirm-modal flex items-center justify-center z-50" style="display: none;">
+      <div class="bg-[#1f251d] p-8 rounded-2xl border border-[#42513e] max-w-md w-full mx-4 modal-card">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-9 h-9 rounded-full bg-red-900/30 flex items-center justify-center">
+            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+          <h3 class="text-white text-xl font-bold">Confirm Deletion</h3>
+        </div>
+        <p class="text-[#a5b6a0] mb-6">
+          Are you sure you want to delete <strong id="deleteProductName" class="text-white"></strong>?
+          This action cannot be undone.
+        </p>
+        <div class="flex gap-3">
+          <button id="confirmDeleteBtn"
+            class="flex-1 cursor-pointer flex items-center justify-center rounded-full h-10 px-4 bg-[#ef4444] text-white text-sm font-bold hover:bg-[#dc2626] transition-colors">
+            Delete
+          </button>
+          <button id="cancelDeleteBtn"
+            class="flex-1 cursor-pointer flex items-center justify-center rounded-full h-10 px-4 bg-[#2d372a] text-white text-sm font-bold hover:bg-[#3a4637] transition-colors">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
 
-            document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
-                hideDeleteConfirmation();
-            });
+    <!-- ══════════════════════════════════════════════════════
+         PAGE 4 — Citizen OTP Login
+    ══════════════════════════════════════════════════════ -->
+    <div id="page4" class="page">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
+          <div class="flex items-center gap-3 text-white">
+            <div class="size-5 text-[#53d22c]">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="text-white text-lg font-bold">RationMate</span>
+          </div>
+        </header>
 
-            // Page 3 - Inventory management
-            document.getElementById('addProduct').addEventListener('click', function() {
-                const productName = document.getElementById('newProductName').value.trim();
-                const quantity = document.getElementById('newProductQuantity').value.trim();
-                
-                if (productName && quantity && !isNaN(quantity) && quantity >= 0) {
-                    if (inventoryData.hasOwnProperty(productName)) {
-                        showNotification('Product already exists! Use update instead.', 'warning');
-                        return;
-                    }
-                    
-                    // Add to inventory data
-                    inventoryData[productName] = parseInt(quantity);
-                    
-                    // Add to table
-                    const tbody = document.getElementById('productTableBody');
-                    const newRow = document.createElement('tr');
-                    newRow.className = 'border-t border-t-[#42513e]';
-                    newRow.setAttribute('data-product', productName);
-                    newRow.innerHTML = `
-                        <td class="h-[72px] px-4 py-2 w-[300px] text-white text-sm font-normal leading-normal">${productName}</td>
-                        <td class="h-[72px] px-4 py-2 w-[200px] text-[#a5b6a0] text-sm font-normal leading-normal stock-value">${quantity}</td>
-                        <td class="h-[72px] px-4 py-2 w-[200px]">
-                            <input type="number" class="update-input w-20 px-2 py-1 rounded bg-[#1f251d] text-white border border-[#42513e] text-sm" placeholder="Qty" min="0">
-                        </td>
-                        <td class="h-[72px] px-4 py-2 w-[150px]">
-                            <div class="flex gap-2">
-                                <button class="update-btn px-3 py-1 bg-[#53d22c] text-[#131712] rounded text-sm font-bold hover:bg-[#45b82a] transition-colors">Update</button>
-                                <button class="delete-btn px-3 py-1 rounded text-sm font-bold">Delete</button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(newRow);
-                    
-                    // Clear inputs
-                    document.getElementById('newProductName').value = '';
-                    document.getElementById('newProductQuantity').value = '';
-                    
-                    // Update user inventory view
-                    updateUserInventory();
-                    
-                    showNotification(`${productName} added successfully!`);
-                } else {
-                    showNotification('Please enter valid product name and quantity!', 'error');
-                }
-            });
+        <div class="flex flex-1 items-center justify-center px-6 py-16">
+          <div class="flex flex-col gap-6 w-full max-w-sm">
+            <div class="text-center">
+              <div class="w-14 h-14 rounded-2xl bg-[#1f251d] border border-[#2d372a] flex items-center justify-center mx-auto mb-4">
+                <svg class="w-7 h-7 text-[#53d22c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <h2 class="text-white text-2xl font-bold mb-1">Citizen Login</h2>
+              <p class="text-[#a5b6a0] text-sm">We'll send an OTP to your mobile number</p>
+            </div>
 
-            // Update stock and delete buttons - Enhanced functionality
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('update-btn')) {
-                    const row = e.target.closest('tr');
-                    const productName = row.getAttribute('data-product');
-                    const input = row.querySelector('.update-input');
-                    const newQuantity = input.value.trim();
-                    
-                    if (newQuantity && !isNaN(newQuantity) && newQuantity >= 0) {
-                        const quantityNum = parseInt(newQuantity);
-                        
-                        // Update inventory data
-                        inventoryData[productName] = quantityNum;
-                        
-                        // Update display in shop management table
-                        row.querySelector('.stock-value').textContent = quantityNum;
-                        input.value = '';
-                        
-                        // Update user inventory view
-                        updateUserInventory();
-                        
-                        // Show success notification
-                        showNotification(`${productName} stock updated to ${quantityNum} ${productName === 'Cooking Oil' ? 'liters' : 'kg'}!`);
-                    } else {
-                        showNotification('Please enter a valid quantity (0 or greater)!', 'error');
-                        input.focus();
-                    }
-                } else if (e.target.classList.contains('delete-btn')) {
-                    const row = e.target.closest('tr');
-                    const productName = row.getAttribute('data-product');
-                    showDeleteConfirmation(productName);
-                }
-            });
+            <div class="flex flex-col gap-4 bg-[#1a211a] rounded-2xl border border-[#2d372a] p-6">
+              <!-- Phone number -->
+              <div class="flex flex-col gap-1">
+                <label class="text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider">Mobile Number</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#a5b6a0] text-sm font-medium">+91</span>
+                  <input id="phoneNumber" type="tel" placeholder="9876543210" maxlength="10"
+                    class="form-input w-full rounded-xl text-white focus:outline-none border border-[#42513e] bg-[#131712] focus:border-[#53d22c] h-12 placeholder:text-[#42513e] pl-12 pr-4 text-sm" />
+                </div>
+              </div>
 
-            // Add Enter key support for update inputs
-            document.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && e.target.classList.contains('update-input')) {
-                    const updateBtn = e.target.parentElement.parentElement.querySelector('.update-btn');
-                    if (updateBtn) {
-                        updateBtn.click();
-                    }
-                }
-            });
+              <button id="sendOtp"
+                class="flex w-full cursor-pointer items-center justify-center rounded-full h-11 px-4 bg-[#53d22c] text-[#131712] text-sm font-bold hover:bg-[#45b82a] transition-colors">
+                <span class="truncate">Send OTP</span>
+              </button>
 
-            // Page 4 - User login
-            // Replace the existing sendOtp click handler with:
-document.getElementById('sendOtp').addEventListener('click', async function() {
-    const phoneNumber = document.getElementById('phoneNumber').value.trim();
-    if (phoneNumber && phoneNumber.length === 10 && /^\d+$/.test(phoneNumber)) {
-        try {
-            const response = await fetch('http://localhost:5000/api/otp/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ phoneNumber })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                // Enable OTP input
-                document.getElementById('otpInput').disabled = false;
-                document.getElementById('verifyOtp').disabled = false;
-                document.getElementById('verifyOtp').classList.remove('opacity-50', 'cursor-not-allowed');
-                document.getElementById('verifyOtp').classList.add('bg-[#53d22c]', 'text-[#131712]');
-                
-                showNotification(`OTP sent! ${data.otp ? 'OTP: ' + data.otp : ''}`);
-                otpSent = true;
-            } else {
-                showNotification(data.message, 'error');
-            }
-        } catch (error) {
-            showNotification('Failed to send OTP', 'error');
-            console.error('Error:', error);
-        }
-    } else {
-        showNotification('Please enter a valid 10-digit phone number!', 'error');
-    }
-});
+              <!-- OTP input — disabled until OTP is sent -->
+              <div class="flex flex-col gap-1">
+                <label class="text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider">OTP</label>
+                <input id="otpInput" type="tel" placeholder="4-digit OTP" maxlength="4" disabled
+                  class="form-input w-full rounded-xl text-white focus:outline-none border border-[#42513e] bg-[#131712] focus:border-[#53d22c] h-12 placeholder:text-[#42513e] px-4 text-sm text-center tracking-[0.4em] font-bold disabled:opacity-40" />
+              </div>
 
-            // Replace the existing verifyOtp click handler with:
-document.getElementById('verifyOtp').addEventListener('click', async function() {
-    const phoneNumber = document.getElementById('phoneNumber').value.trim();
-    const otp = document.getElementById('otpInput').value.trim();
-    
-    if (otpSent && otp) {
-        try {
-            const response = await fetch('http://localhost:5000/api/auth/user/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ phoneNumber, otp })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                // Store token for future requests
-                localStorage.setItem('userToken', data.token);
-                localStorage.setItem('userData', JSON.stringify(data.user));
-                
-                showNotification('Login successful!');
-                showPage('page5');
-                
-                // Reset form
-                document.getElementById('phoneNumber').value = '';
-                document.getElementById('otpInput').value = '';
-                document.getElementById('otpInput').disabled = true;
-                document.getElementById('verifyOtp').disabled = true;
-                otpSent = false;
-            } else {
-                showNotification(data.message, 'error');
-            }
-        } catch (error) {
-            showNotification('Login failed', 'error');
-            console.error('Error:', error);
-        }
-    } else {
-        showNotification('Please enter the OTP!', 'error');
-    }
-});
+              <button id="verifyOtp" disabled
+                class="flex w-full cursor-pointer items-center justify-center rounded-full h-11 px-4 bg-[#2d372a] text-white text-sm font-bold opacity-50 cursor-not-allowed transition-colors">
+                <span class="truncate">Verify OTP</span>
+              </button>
+            </div>
 
-            document.getElementById('backToHome').addEventListener('click', function() {
-                showPage('page1');
-                // Reset form
-                document.getElementById('phoneNumber').value = '';
-                document.getElementById('otpInput').value = '';
-                document.getElementById('otpInput').disabled = true;
-                document.getElementById('verifyOtp').disabled = true;
-                document.getElementById('verifyOtp').classList.add('opacity-50', 'cursor-not-allowed');
-                document.getElementById('verifyOtp').classList.remove('bg-[#53d22c]', 'text-[#131712]');
-                otpSent = false;
-                generatedOtp = '';
-            });
+            <button id="backToHome"
+              class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full h-10 px-4 bg-transparent text-[#a5b6a0] text-sm font-medium hover:text-white transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+              </svg>
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            // Initialize user inventory view
-            updateUserInventory();
-        });
+    <!-- ══════════════════════════════════════════════════════
+         PAGE 5 — Citizen Selects a Shop to View
+    ══════════════════════════════════════════════════════ -->
+    <div id="page5" class="page">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
+          <div class="flex items-center gap-3 text-white">
+            <div class="size-5 text-[#53d22c]">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="text-white text-lg font-bold">RationMate</span>
+          </div>
+          <button id="logoutUserBtn"
+            class="flex cursor-pointer items-center gap-2 rounded-full h-9 px-4 bg-[#2d372a] text-white text-sm font-bold hover:bg-[#ef4444] transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            Logout
+          </button>
+        </header>
 
-        // Function to update user inventory view
-        function updateUserInventory() {
-            const userTable = document.getElementById('userInventoryTable');
-            userTable.innerHTML = '';
-            
-            for (const [product, quantity] of Object.entries(inventoryData)) {
-                const row = document.createElement('tr');
-                row.className = 'border-t border-t-[#42513e]';
-                
-                let displayQuantity = quantity;
-                if (product === 'Cooking Oil') {
-                    displayQuantity = quantity + ' liters';
-                } else {
-                    displayQuantity = quantity + ' kg';
-                }
-                
-                row.innerHTML = `
-                    <td class="h-[72px] px-4 py-2 w-[400px] text-white text-sm font-normal leading-normal">${product}</td>
-                    <td class="h-[72px] px-4 py-2 w-[400px] text-[#a5b6a0] text-sm font-normal leading-normal availability-value">${displayQuantity}</td>
-                `;
-                userTable.appendChild(row);
-            }
-        }
+        <div class="px-6 md:px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[600px] flex-1">
+            <div class="p-4 pb-2">
+              <p class="text-white tracking-tight text-3xl font-bold leading-tight">Check Stock</p>
+              <p class="text-[#a5b6a0] text-sm mt-1">Select a ration shop near you to view available stock</p>
+            </div>
 
-        // Handle Enter key for password input and other modals
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                if (document.getElementById('passwordModal').style.display === 'flex') {
-                    document.getElementById('verifyPassword').click();
-                } else if (document.getElementById('deleteConfirmModal').style.display === 'flex') {
-                    document.getElementById('confirmDeleteBtn').click();
-                } else if (currentPage === 'page4') {
-                    const phoneInput = document.getElementById('phoneNumber');
-                    const otpInput = document.getElementById('otpInput');
-                    
-                    if (document.activeElement === phoneInput && !otpSent) {
-                        document.getElementById('sendOtp').click();
-                    } else if (document.activeElement === otpInput && otpSent) {
-                        document.getElementById('verifyOtp').click();
-                    }
-                }
-            }
-        });
+            <!-- Dynamic user shop list populated by app.js -->
+            <div id="userShopList" class="p-4 flex flex-col gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        // Close modals when clicking outside
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-                document.getElementById('shopPassword').value = '';
-            }
-        });
+    <!-- ══════════════════════════════════════════════════════
+         PAGE 6 — Citizen Views Shop Inventory
+    ══════════════════════════════════════════════════════ -->
+    <div id="page6" class="page">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d372a] px-10 py-3">
+          <div class="flex items-center gap-3 text-white">
+            <div class="size-5 text-[#53d22c]">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="text-white text-lg font-bold">RationMate</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="backToShopSelectBtn"
+              class="flex cursor-pointer items-center gap-2 rounded-full h-9 px-4 bg-[#2d372a] text-white text-sm font-bold hover:bg-[#3a4637] transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+              </svg>
+              All Shops
+            </button>
+            <button id="logoutUserBtn2"
+              class="flex cursor-pointer items-center gap-2 rounded-full h-9 px-4 bg-[#2d372a] text-white text-sm font-bold hover:bg-[#ef4444] transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              Logout
+            </button>
+          </div>
+        </header>
 
-        document.getElementById('deleteConfirmModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideDeleteConfirmation();
-            }
-        });
+        <div class="px-6 md:px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[700px] flex-1">
+            <div class="p-4 pb-2">
+              <p class="text-[#53d22c] text-xs font-semibold uppercase tracking-wider mb-1">Available Stock</p>
+              <p class="text-white tracking-tight text-3xl font-bold leading-tight" id="userInventoryShopName">Shop Name</p>
+              <p class="text-[#a5b6a0] text-sm mt-1">Real-time stock levels from the ration shop</p>
+            </div>
 
-        // Handle ESC key to close modals
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                if (document.getElementById('passwordModal').style.display === 'flex') {
-                    document.getElementById('passwordModal').style.display = 'none';
-                    document.getElementById('shopPassword').value = '';
-                } else if (document.getElementById('deleteConfirmModal').style.display === 'flex') {
-                    hideDeleteConfirmation();
-                }
-            }
-        });
+            <div class="px-4 py-3">
+              <div class="flex overflow-hidden rounded-xl border border-[#42513e] bg-[#131712]">
+                <table class="flex-1 w-full">
+                  <thead>
+                    <tr class="bg-[#1f251d]">
+                      <th class="px-4 py-3 text-left text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider w-1/2">Product</th>
+                      <th class="px-4 py-3 text-left text-[#a5b6a0] text-xs font-semibold uppercase tracking-wider w-1/2">Availability</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userInventoryTable">
+                    <tr>
+                      <td colspan="2" class="text-center text-[#a5b6a0] py-10">Loading…</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-        // Add input validation for phone number
-        document.getElementById('phoneNumber').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-            if (value.length > 10) {
-                value = value.slice(0, 10); // Limit to 10 digits
-            }
-            e.target.value = value;
-        });
+            <!-- Legend -->
+            <div class="px-4 pb-4 flex items-center gap-4 flex-wrap">
+              <span class="text-[#a5b6a0] text-xs">Legend:</span>
+              <span class="stock-badge stock-high text-xs">Available</span>
+              <span class="stock-badge stock-low text-xs">Low stock (below 20)</span>
+              <span class="stock-badge stock-empty text-xs">Out of stock</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        // Add input validation for OTP
-        document.getElementById('otpInput').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-            if (value.length > 4) {
-                value = value.slice(0, 4); // Limit to 4 digits
-            }
-            e.target.value = value;
-        });
+    <!-- ══════════════════════════════════════════════════════
+         Global: Toast Notification
+    ══════════════════════════════════════════════════════ -->
+    <div id="notification" class="notification" role="alert" aria-live="polite"></div>
 
-        // Add input validation for product quantity
-        document.getElementById('newProductQuantity').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/[^\d.]/g, ''); // Only allow digits and decimal
-            e.target.value = value;
-        });
+  </div><!-- /root -->
 
-        // Add hover effects for shop items
-        document.querySelectorAll('.shop-item').forEach(item => {
-            item.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-                this.style.transition = 'transform 0.2s ease';
-            });
-            
-            item.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-
-        // Auto-save functionality for shop data
-        function saveShopData() {
-            try {
-                const shopData = {
-                    inventory: inventoryData,
-                    lastUpdated: new Date().toISOString()
-                };
-                // In a real application, this would be saved to a server
-                console.log('Shop data saved:', shopData);
-            } catch (error) {
-                console.error('Error saving shop data:', error);
-            }
-        }
-
-        // Save data whenever inventory is updated
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('update-btn') || e.target.id === 'addProduct' || e.target.classList.contains('delete-btn')) {
-                setTimeout(saveShopData, 100); // Save after DOM updates
-            }
-        });
-
-        // Data validation for product updates
-        function validateProductData(name, quantity) {
-            if (!name || name.trim().length === 0) {
-                return { valid: false, message: 'Product name cannot be empty' };
-            }
-            
-            if (!quantity || isNaN(quantity) || quantity < 0) {
-                return { valid: false, message: 'Quantity must be a valid positive number' };
-            }
-            
-            if (quantity > 10000) {
-                return { valid: false, message: 'Quantity cannot exceed 10,000 kg' };
-            }
-            
-            return { valid: true };
-        }
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Alt + H for Home
-            if (e.altKey && e.key === 'h') {
-                e.preventDefault();
-                showPage('page1');
-                showNotification('Navigated to Home', 'info');
-            }
-            
-            // Alt + L for Logout (go to home)
-            if (e.altKey && e.key === 'l') {
-                e.preventDefault();
-                showPage('page1');
-                showNotification('Logged out successfully', 'info');
-            }
-        });
-
-        // Enhanced styling
-        const style = document.createElement('style');
-        style.textContent = `
-            .page {
-                opacity: 0;
-                transition: opacity 0.3s ease-in-out;
-            }
-            .page.active {
-                opacity: 1;
-            }
-            .notification.error {
-                background: #ef4444 !important;
-                color: white !important;
-            }
-            .shop-item:hover {
-                transform: translateY(-2px);
-                transition: transform 0.2s ease;
-            }
-            .update-btn:hover {
-                transform: scale(1.05);
-                transition: transform 0.1s ease;
-            }
-            .delete-btn:hover {
-                transform: scale(1.05);
-                transition: transform 0.1s ease;
-            }
-            .form-input:focus {
-                box-shadow: 0 0 0 2px rgba(83, 210, 44, 0.3);
-            }
-            .confirm-modal {
-                animation: fadeIn 0.3s ease;
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Initialize tooltips for better UX
-        function addTooltips() {
-            const tooltipElements = [
-                { id: 'sendOtp', text: 'Click to receive OTP on your phone' },
-                { id: 'verifyOtp', text: 'Enter the 4-digit OTP you received' },
-                { id: 'addProduct', text: 'Add a new product to inventory' }
-            ];
-
-            tooltipElements.forEach(({ id, text }) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.title = text;
-                }
-            });
-
-            // Add tooltips for delete buttons
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.title = 'Delete this product from inventory';
-            });
-
-            document.querySelectorAll('.update-btn').forEach(btn => {
-                btn.title = 'Update product quantity';
-            });
-        }
-
-        // Call tooltip initialization
-        setTimeout(addTooltips, 100);
-
-        // Prevent form submission on enter
-        document.addEventListener('submit', function(e) {
-            e.preventDefault();
-        });
-
-        console.log('Ration Management System with Delete Feature initialized successfully!');
-    </script>
+  <!-- Scripts (api.js must come before app.js) -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

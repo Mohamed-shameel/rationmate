@@ -1,0 +1,39 @@
+# render.yaml — Render deployment blueprint for RationMate
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Usage:
+#   1. Push this file to your GitHub repo
+#   2. In Render dashboard → "New" → "Blueprint"
+#   3. Connect the repo — Render reads this file automatically
+#   4. Set the secret environment variables in the Render dashboard
+#      (MONGODB_URI, JWT_SECRET, TWILIO_* — never commit these)
+
+services:
+  - type: web
+    name: rationmate
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/test
+    autoDeploy: true         # redeploy automatically on every push to main
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # ── Set these in the Render dashboard (never in this file) ──────────────
+      # - key: MONGODB_URI
+      #   value: mongodb+srv://...
+      #
+      # - key: JWT_SECRET
+      #   value: <long random hex string>
+      #
+      # - key: TWILIO_ACCOUNT_SID
+      #   value: ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      #
+      # - key: TWILIO_AUTH_TOKEN
+      #   value: your_auth_token_here
+      #
+      # - key: TWILIO_PHONE_NUMBER
+      #   value: +1xxxxxxxxxx
